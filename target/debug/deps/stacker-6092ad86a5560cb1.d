@@ -1,0 +1,10 @@
+/Users/stynerstiner/Downloads/OSINTCafe-main/target/debug/deps/stacker-6092ad86a5560cb1.d: /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs
+
+/Users/stynerstiner/Downloads/OSINTCafe-main/target/debug/deps/libstacker-6092ad86a5560cb1.rlib: /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs
+
+/Users/stynerstiner/Downloads/OSINTCafe-main/target/debug/deps/libstacker-6092ad86a5560cb1.rmeta: /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs
+
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs:
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs:
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs:
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs:

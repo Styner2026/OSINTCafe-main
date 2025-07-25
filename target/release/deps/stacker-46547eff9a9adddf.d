@@ -1,0 +1,10 @@
+/Users/stynerstiner/Downloads/OSINTCafe-main/target/release/deps/stacker-46547eff9a9adddf.d: /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs
+
+/Users/stynerstiner/Downloads/OSINTCafe-main/target/release/deps/libstacker-46547eff9a9adddf.rlib: /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs
+
+/Users/stynerstiner/Downloads/OSINTCafe-main/target/release/deps/libstacker-46547eff9a9adddf.rmeta: /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs /Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs
+
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/lib.rs:
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/mod.rs:
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/backends/macos.rs:
+/Users/stynerstiner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stacker-0.1.21/src/mmap_stack_restore_guard.rs:

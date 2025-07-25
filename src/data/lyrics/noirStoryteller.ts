@@ -1,0 +1,81 @@
+// Noir Storyteller Edition Lyrics
+// Track index: 2
+export const noirStorytellerLyrics = {
+  title: "Midnight Chain (Guardians of the Node)",
+  style: "noir-cyber-darkwave",
+  lyrics: [
+    { type: "heading" as const, text: "[Spoken Intro — whisper, storm outside]" },
+    { type: "line" as const, text: "In the silence between thunder," },
+    { type: "line" as const, text: "A signal flickers—" },
+    { type: "line" as const, text: "A café where no secret sleeps," },
+    { type: "line" as const, text: "And not all ghosts are dead…" },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Verse 1 — minor piano, gentle synth]" },
+    { type: "line" as const, text: "Midnight shadows curl around the café door," },
+    { type: "line" as const, text: "Glass glows blue—data haunting every floor." },
+    { type: "line" as const, text: "Promises of fortune, profiles selling dreams," },
+    { type: "line" as const, text: "But evil wears a friendly face in the phosphor screen." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Pre-Chorus — rising strings, echo FX]" },
+    { type: "line" as const, text: "There's danger in the silence," },
+    { type: "line" as const, text: "There's fraud behind the smile—" },
+    { type: "line" as const, text: "But justice rides on quantum rails," },
+    { type: "line" as const, text: "Across the datastream's wild." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Chorus — epic, organ + choral]" },
+    { type: "line" as const, text: "🌩️ ICP! DFINITY!" },
+    { type: "line" as const, text: "Light in the darkest chain—" },
+    { type: "line" as const, text: "When phantoms prowl and ledgers howl," },
+    { type: "line" as const, text: "You shield us from the rain." },
+    { type: "line" as const, text: "🏛️ OSINT Café—our haven glows," },
+    { type: "line" as const, text: "Where truth defeats the cold—" },
+    { type: "line" as const, text: "With SafeGuardian's eyes," },
+    { type: "line" as const, text: "No secret hides," },
+    { type: "line" as const, text: "Our stories brave and bold." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Verse 2 — synths pulse, organ, rain]" },
+    { type: "line" as const, text: "Outside: a lover's promise, gold as pixel dust," },
+    { type: "line" as const, text: "Inside: a thousand fingerprints, exposed to honest trust." },
+    { type: "line" as const, text: "Every scammer's shadow—dancing on the node," },
+    { type: "line" as const, text: "Till DFINITY's thunder shatters every code." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Bridge — strings swell, choral]" },
+    { type: "line" as const, text: "Canisters awaken," },
+    { type: "line" as const, text: "Defenders stand aligned—" },
+    { type: "line" as const, text: "Guardians of every heartbreak," },
+    { type: "line" as const, text: "Protectors of the mind." },
+    { type: "line" as const, text: "With choral song and ciphered lock," },
+    { type: "line" as const, text: "We ward the sleepless night—" },
+    { type: "line" as const, text: "For on the chain, no one alone—" },
+    { type: "line" as const, text: "The Café brings the light." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Chorus — dramatic, organ + choir]" },
+    { type: "line" as const, text: "🌩️ ICP! DFINITY!" },
+    { type: "line" as const, text: "Thunder through the sky—" },
+    { type: "line" as const, text: "The bravest code, the sharpest node," },
+    { type: "line" as const, text: "No watcher passes by." },
+    { type: "line" as const, text: "🏛️ OSINT Café—where legends rise," },
+    { type: "line" as const, text: "Each hack becomes a tale—" },
+    { type: "line" as const, text: "With every strike of justice bright," },
+    { type: "line" as const, text: "The darkness must grow pale." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Outro — gentle piano, choral fade]" },
+    { type: "line" as const, text: "So if you wander lost or longing," },
+    { type: "line" as const, text: "Or if danger stalks your path—" },
+    { type: "line" as const, text: "Remember: Café's beacon burns," },
+    { type: "line" as const, text: "And DFINITY clears the wrath." },
+    { type: "line" as const, text: "🌙 Midnight on the blockchain—where shadows can't remain," },
+    { type: "line" as const, text: "SafeGuardian, DFINITY, ICP—" },
+    { type: "line" as const, text: "Guardians of the Chain." },
+    { type: "spacer" as const },
+    
+    { type: "note" as const, text: "⚡ Thunder fades... The guardians watch eternal." }
+  ]
+} as const;

@@ -1,0 +1,40 @@
+type UserProfile = record {
+  user_principal : principal;
+  nickname : opt text;
+  trust_score : nat32;
+  verification_level : text;
+  created_at : nat64;
+  last_seen : nat64;
+};
+
+type IdentityReport = record {
+  user_principal : principal;
+  identity_age : text;
+  trust_score : nat32;
+  risk_level : text;
+  recommendations : vec text;
+  verified_by : text;
+};
+
+type Result_UserProfile = variant {
+  Ok : UserProfile;
+  Err : text;
+};
+
+type Result_IdentityReport = variant {
+  Ok : IdentityReport;
+  Err : text;
+};
+
+type Result_Text = variant {
+  Ok : text;
+  Err : text;
+};
+
+service : {
+  who_am_i : () -> (Result_UserProfile) query;
+  verify_identity : () -> (Result_IdentityReport);
+  update_trust_score : (nat32) -> (Result_Text);
+  set_nickname : (text) -> (Result_Text);
+  get_stats : () -> (vec record { text; nat64 }) query;
+}

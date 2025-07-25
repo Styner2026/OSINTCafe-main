@@ -1,0 +1,81 @@
+// French Storyteller Edition Lyrics
+// Track index: 1
+export const frenchStorytellerLyrics = {
+  title: "La Chaîne de Minuit (Gardiens du Nœud)",
+  style: "cinématique-darkwave",
+  lyrics: [
+    { type: "heading" as const, text: "[Intro parlée — murmure, tempête dehors]" },
+    { type: "line" as const, text: "Dans le silence entre deux éclairs," },
+    { type: "line" as const, text: "Un signal vacille—" },
+    { type: "line" as const, text: "Un café où nul secret ne dort," },
+    { type: "line" as const, text: "Et où tous les fantômes ne sont pas morts…" },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Couplet 1 — piano mineur, synthé doux]" },
+    { type: "line" as const, text: "Des ombres de minuit s'enroulent autour de la porte du café," },
+    { type: "line" as const, text: "Le verre luit en bleu—des données hantent chaque côté." },
+    { type: "line" as const, text: "Promesses de fortune, profils vendant des rêves," },
+    { type: "line" as const, text: "Mais le mal porte un visage aimable sous la lumière qui s'élève." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Pré-Refrain — cordes montantes, échos]" },
+    { type: "line" as const, text: "Le danger rôde dans le silence," },
+    { type: "line" as const, text: "La fraude derrière le sourire—" },
+    { type: "line" as const, text: "Mais la justice file sur des rails quantiques," },
+    { type: "line" as const, text: "Sur le flot sauvage des données à franchir." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Refrain — épique, orgue + chœur]" },
+    { type: "line" as const, text: "🎵 ICP ! DFINITY !" },
+    { type: "line" as const, text: "Lumière sur la chaîne la plus sombre—" },
+    { type: "line" as const, text: "Quand les fantômes rôdent, que les registres grondent," },
+    { type: "line" as const, text: "Vous nous abritez de l'ombre." },
+    { type: "line" as const, text: "🎵 OSINT Café—notre refuge luit," },
+    { type: "line" as const, text: "Où la vérité triomphe du froid—" },
+    { type: "line" as const, text: "Sous les yeux de SafeGuardian," },
+    { type: "line" as const, text: "Aucun secret ne fuit," },
+    { type: "line" as const, text: "Nos histoires sont fières et fortes de foi." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Couplet 2 — synthés, orgue, piano]" },
+    { type: "line" as const, text: "Dehors : une promesse d'amour, dorée comme la poussière des pixels," },
+    { type: "line" as const, text: "Dedans : mille empreintes révélées à la lumière essentielle." },
+    { type: "line" as const, text: "L'ombre de chaque fraudeur danse sur le nœud," },
+    { type: "line" as const, text: "Jusqu'à ce que le tonnerre de DFINITY brise tous les codes en jeu." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Pont — cordes, orgue, chœur]" },
+    { type: "line" as const, text: "Les canisters s'éveillent," },
+    { type: "line" as const, text: "Les défenseurs sont en ligne—" },
+    { type: "line" as const, text: "Gardiens de chaque cœur brisé," },
+    { type: "line" as const, text: "Protecteurs de chaque esprit digne." },
+    { type: "line" as const, text: "Chant choral et verrouillage crypté," },
+    { type: "line" as const, text: "Nous veillons sur la nuit sans sommeil—" },
+    { type: "line" as const, text: "Car sur la chaîne, personne n'est isolé—" },
+    { type: "line" as const, text: "Le Café offre la lumière sans pareil." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Refrain Final — dramatique]" },
+    { type: "line" as const, text: "🎵 ICP ! DFINITY !" },
+    { type: "line" as const, text: "Le tonnerre fend le ciel—" },
+    { type: "line" as const, text: "Le code le plus brave, le nœud le plus fidèle," },
+    { type: "line" as const, text: "Aucun guetteur ne surveille." },
+    { type: "line" as const, text: "🎵 OSINT Café—là où naissent les légendes," },
+    { type: "line" as const, text: "Chaque hack devient récit—" },
+    { type: "line" as const, text: "À chaque coup de justice ardente," },
+    { type: "line" as const, text: "L'obscurité s'enfuit." },
+    { type: "spacer" as const },
+    
+    { type: "heading" as const, text: "[Outro — piano doux, chœur]" },
+    { type: "line" as const, text: "Si tu erres perdu ou nostalgique," },
+    { type: "line" as const, text: "Ou si le danger hante ta route—" },
+    { type: "line" as const, text: "Rappelle-toi : la lumière du Café luit," },
+    { type: "line" as const, text: "Et DFINITY lève le doute." },
+    { type: "line" as const, text: "🌙 Minuit sur la blockchain—là où les ombres s'effacent," },
+    { type: "line" as const, text: "SafeGuardian, DFINITY, ICP—" },
+    { type: "line" as const, text: "Gardiens de la chaîne et de l'espace." },
+    { type: "spacer" as const },
+    
+    { type: "note" as const, text: "🎭 Gardiens de la chaîne éternelle" }
+  ]
+} as const;
