@@ -265,7 +265,7 @@ const ThreatIntelligence = () => {
 
         setIsUpdatingTrust(true);
         try {
-            const result = await icpIdentityService.updateTrustScore(newTrustScore);
+            await icpIdentityService.updateTrustScore(newTrustScore);
             toast.success(`🎯 Trust score updated to ${newTrustScore}/100!`);
 
             // Update the verification result if it exists

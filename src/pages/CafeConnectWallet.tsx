@@ -1,4 +1,4 @@
-import { Coffee, Star, Shield, Heart, Gift, Users, Search, Activity } from 'lucide-react';
+import { Coffee, Shield, Heart, Gift, Users, Search, Activity } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
@@ -982,7 +982,7 @@ export default function CafeConnectWallet() {
                                                 poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'%3E%3Crect width='400' height='225' fill='%23161616'/%3E%3Ctext x='200' y='112' text-anchor='middle' fill='%2300f5ff' font-family='monospace' font-size='16'%3EAI Assistant%3C/text%3E%3C/svg%3E"
                                             >
                                                 <source
-                                                    src="https://pub-b47f1581004140fdbce86b4213266bb9.r2.dev/OSINTCafe-main/OSINT-Cafe-Talking-Avators/OSINT-Cafe-IntroAvator.mp4"
+                                                    src="https://pub-b47f1581004140fdbce86b4213266bb9.r2.dev/Mama-OSINT-Cafe%CC%81.mp4"
                                                     type="video/mp4"
                                                 />
                                                 {/* Fallback for browsers that don't support video */}
