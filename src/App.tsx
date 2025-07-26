@@ -7,8 +7,7 @@ import Footer from './components/Footer.tsx';
 import HackathonBanner from './components/HackathonBanner.tsx';
 import Home from './pages/Home.tsx';
 import DatingSafety from './pages/DatingSafety.tsx';
-import AIAssistant from './pages/AIAssistant.tsx';
-import BlockchainVerification from './pages/BlockchainVerification.tsx';
+import CafeConnectWallet from './pages/CafeConnectWallet.tsx';
 import ThreatIntelligence from './pages/ThreatIntelligence.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import APIStatus from './pages/APIStatus.tsx';
@@ -39,8 +38,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/dating-safety" element={<DatingSafety />} />
-                <Route path="/ai-assistant" element={<AIAssistant />} />
-                <Route path="/blockchain" element={<BlockchainVerification />} />
+                <Route path="/cafe-connect-wallet" element={<CafeConnectWallet />} />
                 <Route path="/threat-intel" element={<ThreatIntelligence />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/api-status" element={<APIStatus />} />

@@ -44,3 +44,40 @@ export interface EducationContent {
   tags: string[];
   thumbnail?: string;
 }
+
+// Blockchain Intelligence Types
+export interface InvestigationResults {
+  balance: string;
+  transactionCount: number;
+  firstSeen: string;
+  lastActivity: string;
+  riskScore: number;
+  mixingScore: number;
+  exchangeLinks: number;
+  knownTags: number;
+  connectedAddresses: number;
+  clusterSize: number;
+  privacyScore: number;
+  activityPattern: string;
+  summary: string;
+}
+
+// Enhanced Network interface for blockchain intelligence
+export interface BlockchainNetwork {
+  id: string;
+  name: string;
+  symbol: string;
+  color: string;
+  icon: string;
+  blockHeight: number;
+  hashRate: string;
+  activeNodes: number;
+  marketCap: string;
+  securityLevel: number;
+}
+
+export interface InvestigationMode {
+  id: string;
+  label: string;
+  icon: any; // Lucide icon component
+}

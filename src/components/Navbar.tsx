@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Bot, Activity, Search, Home, ExternalLink, Github, Globe, ChevronDown, Monitor } from 'lucide-react';
+import { Shield, Wallet, Search, Home, ExternalLink, Github, Globe, ChevronDown, Monitor } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
@@ -10,13 +10,18 @@ const Navbar = () => {
     const navItems = [
         { path: '/', label: 'Home', icon: Home },
         { path: '/dating-safety', label: 'Dating Safety', icon: Shield },
-        { path: '/ai-assistant', label: 'AI Assistant', icon: Bot },
-        { path: '/blockchain', label: 'Blockchain', icon: Activity },
+        { path: '/cafe-connect-wallet', label: 'CaféConnect Wallet', icon: Wallet },
         { path: '/threat-intel', label: 'Threat Intel', icon: Search },
-        { path: '/api-status', label: 'API Status', icon: Monitor },
     ];
 
     const externalLinks = [
+        {
+            label: 'API Status',
+            url: '/api-status',
+            icon: Monitor,
+            description: 'View API connection status',
+            isInternal: true
+        },
         {
             label: 'Website',
             url: 'https://www.styner.dev/',
@@ -119,6 +124,33 @@ const Navbar = () => {
                                     <div className="p-2">
                                         {externalLinks.map((link, index) => {
                                             const Icon = link.icon;
+
+                                            if (link.isInternal) {
+                                                return (
+                                                    <Link
+                                                        key={index}
+                                                        to={link.url}
+                                                        onClick={() => {
+                                                            setIsDropdownOpen(false);
+                                                            window.scrollTo({ top: 0, behavior: 'auto' });
+                                                        }}
+                                                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-cyber-blue/10 hover:border-cyber-blue/30 transition-all duration-300 group"
+                                                    >
+                                                        <div className="w-8 h-8 bg-gradient-to-r from-cyber-blue/20 to-cyber-green/20 rounded-lg flex items-center justify-center group-hover:from-cyber-blue/30 group-hover:to-cyber-green/30 transition-all duration-300">
+                                                            <Icon className="w-4 h-4 text-cyber-blue group-hover:text-cyber-green" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="text-white font-medium group-hover:text-cyber-blue transition-colors duration-300">
+                                                                {link.label}
+                                                            </div>
+                                                            <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                                                {link.description}
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                );
+                                            }
+
                                             return (
                                                 <a
                                                     key={index}
