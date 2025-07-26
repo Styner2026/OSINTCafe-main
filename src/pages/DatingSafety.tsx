@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Play, Volume2, VolumeX } from 'lucide-react';
 import { Shield, Search, Users, Upload, Heart, Key, Globe, CheckCircle, AlertCircle, AlertTriangle, RefreshCw, Share2, Mail, Copy, Download, QrCode, Send, UserCheck } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import toast from 'react-hot-toast';
@@ -14,6 +15,42 @@ const DatingSafety = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [results, setResults] = useState<ProfileAnalysis | null>(null);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+    const [isMuted, setIsMuted] = useState(true);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Video control functions
+    const toggleMute = () => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        video.muted = !video.muted;
+        setIsMuted(video.muted);
+    };
+
+    // Handle video click - toggle mute only
+    const handleVideoClick = () => {
+        toggleMute();
+    };
+
+    // Auto-play video when component mounts and ensure it continues playing
+    useEffect(() => {
+        const video = videoRef.current;
+        if (video) {
+            video.play().catch(console.error);
+
+            // Ensure video continues playing if it ever stops
+            const handlePause = () => {
+                if (video.paused) {
+                    video.play().catch(console.error);
+                }
+            };
+
+            video.addEventListener('pause', handlePause);
+            return () => {
+                video.removeEventListener('pause', handlePause);
+            };
+        }
+    }, []);
 
     // ICP Identity state
     const [icpIdentity, setIcpIdentity] = useState({
@@ -432,7 +469,7 @@ Why settle for basic security when you can have ICP's revolutionary blockchain p
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data=${encodeURIComponent(request.url)}`;
 
             // Try multiple methods to show QR code
-            
+
             // Method 1: Try to open in new window
             const qrWindow = window.open(qrUrl, 'qr-code', 'width=500,height=500,resizable=yes,scrollbars=yes,location=no,toolbar=no,menubar=no');
 
@@ -443,7 +480,7 @@ Why settle for basic security when you can have ICP's revolutionary blockchain p
 
             // Method 2: If popup blocked, try direct navigation in same tab
             const userWantsNewTab = confirm('🔲 QR Code ready! Click OK to open in new tab, or Cancel to download directly.');
-            
+
             if (userWantsNewTab) {
                 // Try alternative popup method
                 const link = document.createElement('a');
@@ -459,20 +496,20 @@ Why settle for basic security when you can have ICP's revolutionary blockchain p
                 const response = await fetch(qrUrl);
                 const blob = await response.blob();
                 const downloadUrl = URL.createObjectURL(blob);
-                
+
                 const downloadLink = document.createElement('a');
                 downloadLink.href = downloadUrl;
                 downloadLink.download = `dating-verification-qr-${Date.now()}.png`;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
-                
+
                 URL.revokeObjectURL(downloadUrl);
                 toast.success('🔲 QR code downloaded! Share the image to request verification.');
             }
         } catch (error) {
             console.error('Error generating QR code:', error);
-            
+
             // Fallback: Copy the URL to clipboard
             try {
                 const request = generateVerificationRequest();
@@ -887,16 +924,14 @@ Why settle for basic security when you can have ICP's revolutionary blockchain p
                                     <div className="aspect-video bg-black/50 rounded-lg border border-cyber-green/30 overflow-hidden">
                                         {/* Main Video Player */}
                                         <video
+                                            ref={videoRef}
                                             className="w-full h-full object-cover rounded-lg cursor-pointer"
                                             autoPlay
-                                            muted
+                                            muted={isMuted}
                                             loop
                                             playsInline
                                             preload="metadata"
-                                            onClick={(e) => {
-                                                const video = e.target as HTMLVideoElement;
-                                                video.muted = !video.muted;
-                                            }}
+                                            onClick={handleVideoClick}
                                         >
                                             <source src="https://pub-b47f1581004140fdbce86b4213266bb9.r2.dev/OSINTCafe-main/OSINT-Cafe-Talking-Avators/OSINT-Cafe-Talking-Avators/Dom-Digital-Avator..mp4" type="video/mp4" />
                                             <source src="/videos/dating-safety-dashboard-explanation.mp4" type="video/mp4" />
@@ -918,10 +953,37 @@ Why settle for basic security when you can have ICP's revolutionary blockchain p
                                             </div>
                                         </video>
 
-                                        {/* Video Info Overlay */}
-                                        <div className="absolute bottom-2 left-2 bg-black/80 rounded px-2 py-1">
-                                            <span className="text-xs text-cyber-green font-medium">AI Dashboard Guide</span>
+                                        {/* Frosty Glass Play Button Overlay - Only Visible When Muted */}
+                                        {isMuted && (
+                                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                <div className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 glass-play-btn">
+                                                    <Play className="w-8 h-8 text-white/90 ml-1" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Subtle Video Status Indicator */}
+                                        <div className="absolute top-3 right-3 bg-black/30 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
+                                            <div className="w-1.5 h-1.5 bg-cyber-green rounded-full animate-pulse"></div>
+                                            <span className="text-white/90 text-xs font-medium">
+                                                {isMuted ? 'Muted' : 'Sound On'}
+                                            </span>
                                         </div>
+
+                                        {/* Simple Audio Status - Bottom Right */}
+                                        <div className="absolute bottom-3 right-3 flex items-center justify-center">
+                                            <div className="w-8 h-8 bg-black/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/10">
+                                                {isMuted ?
+                                                    <VolumeX className="w-4 h-4 text-white/70" /> :
+                                                    <Volume2 className="w-4 h-4 text-white/70" />
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Video Info Overlay */}
+                                    <div className="absolute bottom-2 left-2 bg-black/80 rounded px-2 py-1">
+                                        <span className="text-xs text-cyber-green font-medium">AI Dashboard Guide</span>
                                     </div>
                                 </div>
                             </div>
@@ -1039,7 +1101,7 @@ Why settle for basic security when you can have ICP's revolutionary blockchain p
                                     </div>
                                 ) : (
                                     <div className="text-center text-gray-400 py-12 border-2 border-dashed border-gray-600/50 rounded-lg">
-                                        <div className="text-6xl mb-4">�</div>
+                                        <div className="text-6xl mb-4">🛡️</div>
                                         <h4 className="text-xl font-semibold mb-2 text-cyber-blue">Output Area Ready</h4>
                                         <p>Analysis results will display in this secure zone</p>
                                         <p className="text-sm mt-2 text-cyber-blue/70">• Safety scores • Red flags • Recommendations</p>

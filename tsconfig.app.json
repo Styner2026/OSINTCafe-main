@@ -23,5 +23,11 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/services/rust-bitcoinwallet/**/*",
+    "src/services/rust-photo-gallery/**/*", 
+    "src/services/rust-vetkeys-rust/**/*",
+    "src/pages/WalletDashboard.tsx"
+  ]
 }

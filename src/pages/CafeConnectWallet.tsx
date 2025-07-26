@@ -1,9 +1,46 @@
-import { Coffee, Shield, Heart, Gift, Users, Search, Activity } from 'lucide-react';
+import { Coffee, Shield, Heart, Gift, Users, Search, Activity, Play, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export default function CafeConnectWallet() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Video state management
+    const [isMuted, setIsMuted] = useState(true);
+
+    // Video control functions
+    const toggleMute = () => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        video.muted = !video.muted;
+        setIsMuted(video.muted);
+    };
+
+    // Handle video click - toggle mute only
+    const handleVideoClick = () => {
+        toggleMute();
+    };    // Auto-play video when component mounts and ensure it continues playing
+    useEffect(() => {
+        const video = videoRef.current;
+        if (video) {
+            video.play().catch(console.error);
+
+            // Ensure video continues playing if it ever stops
+            const handlePause = () => {
+                if (video.paused) {
+                    video.play().catch(console.error);
+                }
+            };
+
+            video.addEventListener('pause', handlePause);
+            return () => {
+                video.removeEventListener('pause', handlePause);
+            };
+        }
+    }, []);
 
     // Counter animation hook
     const useCounter = (end: number, duration: number = 2000, suffix: string = '') => {
@@ -403,6 +440,19 @@ export default function CafeConnectWallet() {
                         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 2px 8px rgba(0, 0, 0, 0.1);
                         border: 1px solid #e5e7eb;
                     }
+                    
+                    /* Frosty glass button style without glow */
+                    .glass-play-btn {
+                        backdrop-filter: blur(8px);
+                        background: rgba(255, 255, 255, 0.15);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .glass-play-btn:hover {
+                        transform: scale(1.05);
+                        background: rgba(255, 255, 255, 0.2);
+                    }
                 `
                 }} />
                 {/*                                                    <div className="flex items-center justify-between bg-gray-800/30 rounded-lg p-2 hover:bg-gray-800/50 transition-colors duration-200">
@@ -427,9 +477,17 @@ export default function CafeConnectWallet() {
                             <p className="text-gray-300 text-lg leading-relaxed max-w-lg">
                                 The world's first emotionally intelligent dating wallet. Load money via Venmo, Apple Pay, CashApp — no crypto required. Track dates, build trust, stay safe.
                             </p>
-                            <button className="bg-transparent border-2 border-cyber-blue text-cyber-blue px-8 py-3 rounded-full hover:bg-cyber-blue hover:text-black hover:scale-105 hover:shadow-lg hover:shadow-cyber-blue/25 transition-all duration-300 font-medium transform">
-                                Join CaféConnect
-                            </button>
+                            <div className="flex space-x-4">
+                                <Link
+                                    to="/wallet"
+                                    className="bg-gradient-to-r from-cyber-blue to-blue-600 text-white px-8 py-3 rounded-full hover:from-blue-600 hover:to-blue-700 hover:scale-105 transition-all duration-300 font-medium transform shadow-lg hover:shadow-xl"
+                                >
+                                    🚀 Access Live Wallet
+                                </Link>
+                                <button className="bg-transparent border-2 border-cyber-blue text-cyber-blue px-8 py-3 rounded-full hover:bg-cyber-blue hover:text-black hover:scale-105 hover:shadow-lg hover:shadow-cyber-blue/25 transition-all duration-300 font-medium transform">
+                                    Learn More
+                                </button>
+                            </div>
                         </div>                    {/* Right Content - Phone Mockups */}
                         <div className="relative flex justify-center lg:justify-start">
                             {/* First Phone */}
@@ -922,46 +980,67 @@ export default function CafeConnectWallet() {
                                 {/* Left side - Content */}
                                 <div>
                                     <h2 className="text-3xl font-cyber font-bold mb-4 leading-tight bg-gradient-to-r from-cyber-blue via-cyber-green to-accent-orange bg-clip-text text-transparent">
-                                        OSINT Café Meets
-                                        <br />
-                                        Your Dating Safety Needs
+                                        OSINT Café Safety
                                     </h2>
 
-                                    <p className="text-gray-400 text-base mb-6 leading-relaxed">
-                                        Advanced AI verification for dating safety, romance scam detection, and relationship protection. Make informed decisions with our comprehensive background verification platform.
+                                    <p className="text-gray-400 text-base mb-4 leading-relaxed">
+                                        Advanced AI protection for safer relationships. Verify profiles and detect scams.
                                     </p>
 
                                     {/* Category Buttons */}
-                                    <div className="space-y-2">
-                                        <div className="flex items-center space-x-4 p-3 bg-dark-panel/50 rounded-lg border border-cyber-blue/20 cursor-pointer hover:bg-cyber-blue/10 hover:border-cyber-blue/50 transition-colors duration-300 group">
-                                            <div className="w-5 h-5 text-red-400 group-hover:text-red-300">
-                                                <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 1l3.09 6.26L22 9l-5 4.87L18.18 21 12 17.77 5.82 21 7 13.87 2 9l6.91-1.74L12 1z" />
-                                                </svg>
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col p-5 bg-dark-panel/50 rounded-xl border-2 border-cyber-blue/30 cursor-pointer hover:bg-cyber-blue/10 hover:border-cyber-blue/70 transition-all duration-300 group shadow-lg shadow-cyber-blue/10 hover:shadow-cyber-blue/20">
+                                            <div className="flex items-center space-x-4 mb-2">
+                                                <div className="w-7 h-7 text-red-400 group-hover:text-red-300">
+                                                    <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M12 1l3.09 6.26L22 9l-5 4.87L18.18 21 12 17.77 5.82 21 7 13.87 2 9l6.91-1.74L12 1z" />
+                                                    </svg>
+                                                </div>
+                                                <span className="text-white text-xl font-bold group-hover:text-cyber-blue tracking-wide">Romance Scam Detection</span>
                                             </div>
-                                            <span className="text-white font-medium group-hover:text-cyber-blue">Romance Scam Detection</span>
+                                            <div className="grid grid-cols-2 gap-1 ml-11">
+                                                <p className="text-gray-300 text-sm font-medium">• AI-powered analysis</p>
+                                                <p className="text-gray-300 text-sm font-medium">• Financial warnings</p>
+                                                <p className="text-gray-300 text-sm font-medium">• Profile verification</p>
+                                                <p className="text-gray-300 text-sm font-medium">• Emergency alerts</p>
+                                            </div>
                                         </div>
 
-                                        <div className="flex items-center space-x-4 p-3 bg-dark-panel/30 rounded-lg border border-gray-600 cursor-pointer hover:bg-dark-panel/50 transition-colors duration-300 group">
-                                            <div className="w-5 h-5 text-cyber-green">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" fill="none" />
-                                                </svg>
+                                        <div className="flex flex-col p-5 bg-dark-panel/30 rounded-xl border-2 border-cyber-green/30 cursor-pointer hover:bg-cyber-green/5 hover:border-cyber-green/50 transition-all duration-300 group shadow-lg shadow-cyber-green/5 hover:shadow-cyber-green/15">
+                                            <div className="flex items-center space-x-4 mb-2">
+                                                <div className="w-7 h-7 text-cyber-green">
+                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" fill="none" />
+                                                    </svg>
+                                                </div>
+                                                <span className="text-white text-xl font-bold group-hover:text-cyber-green tracking-wide">Profile Verification</span>
                                             </div>
-                                            <span className="text-gray-400 font-medium group-hover:text-gray-300">Profile Verification</span>
+                                            <div className="grid grid-cols-2 gap-1 ml-11">
+                                                <p className="text-gray-300 text-sm font-medium">• Blockchain identity</p>
+                                                <p className="text-gray-300 text-sm font-medium">• Social media check</p>
+                                                <p className="text-gray-300 text-sm font-medium">• Photo authenticity</p>
+                                                <p className="text-gray-300 text-sm font-medium">• Trust scoring</p>
+                                            </div>
                                         </div>
 
-                                        {/* AI Assistant CTA Button - Centered */}
+                                        {/* Bitcoin Dashboard CTA Button - Centered */}
                                         <div className="pt-4 flex justify-center">
-                                            <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyber-blue to-cyber-green text-dark-bg font-bold rounded-lg hover:shadow-lg hover:shadow-cyber-blue/25 transition-shadow duration-300 hover:scale-105 cursor-pointer">
-                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M21,11C21,16.55 17.16,21.74 12,23C6.84,21.74 3,16.55 3,11V5L12,1L21,5V11M12,7C10.34,7 9,8.34 9,10C9,11.66 10.34,13 12,13C13.66,13 15,11.66 15,10C15,8.34 13.66,7 12,7Z" />
+                                            <Link
+                                                to="/wallet"
+                                                className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 text-white font-bold rounded-lg shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/75 transition-all duration-300 hover:scale-105"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%)',
+                                                    boxShadow: '0 8px 32px rgba(249, 115, 22, 0.4), 0 0 0 1px rgba(249, 115, 22, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                                                }}
+                                            >
+                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                                 </svg>
-                                                <span>Try AI Assistant</span>
-                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <span>Go to Bitcoin Dashboard</span>
+                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
                                                 </svg>
-                                            </div>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -973,12 +1052,14 @@ export default function CafeConnectWallet() {
                                         <div className="aspect-video relative">
                                             {/* AI Assistant Video */}
                                             <video
-                                                className="w-full h-full rounded-lg object-cover"
-                                                controls
-                                                muted
+                                                ref={videoRef}
+                                                className="w-full h-full rounded-lg object-cover cursor-pointer"
+                                                autoPlay
+                                                muted={isMuted}
                                                 loop
                                                 playsInline
-                                                preload="metadata"
+                                                preload="auto"
+                                                onClick={handleVideoClick}
                                                 poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'%3E%3Crect width='400' height='225' fill='%23161616'/%3E%3Ctext x='200' y='112' text-anchor='middle' fill='%2300f5ff' font-family='monospace' font-size='16'%3EAI Assistant%3C/text%3E%3C/svg%3E"
                                             >
                                                 <source
@@ -1000,10 +1081,31 @@ export default function CafeConnectWallet() {
                                                 </div>
                                             </video>
 
-                                            {/* Video Play Indicator */}
-                                            <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
+                                            {/* Frosty Glass Play Button Overlay - Only Visible When Muted */}
+                                            {isMuted && (
+                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                    <div className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 glass-play-btn">
+                                                        <Play className="w-8 h-8 text-white/90 ml-1" />
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Subtle Video Status Indicator */}
+                                            <div className="absolute top-3 right-3 bg-black/30 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
                                                 <div className="w-1.5 h-1.5 bg-cyber-green rounded-full animate-pulse"></div>
-                                                <span className="text-white text-xs font-medium">Live</span>
+                                                <span className="text-white/90 text-xs font-medium">
+                                                    {isMuted ? 'Muted' : 'Sound On'}
+                                                </span>
+                                            </div>
+
+                                            {/* Simple Audio Status - Bottom Right */}
+                                            <div className="absolute bottom-3 right-3 flex items-center justify-center">
+                                                <div className="w-8 h-8 bg-black/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/10">
+                                                    {isMuted ?
+                                                        <VolumeX className="w-4 h-4 text-white/70" /> :
+                                                        <Volume2 className="w-4 h-4 text-white/70" />
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
 

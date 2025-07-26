@@ -11,7 +11,7 @@ const Navbar = () => {
         { path: '/', label: 'Home', icon: Home },
         { path: '/dating-safety', label: 'Dating Safety', icon: Shield },
         { path: '/cafe-connect-wallet', label: 'CaféConnect Wallet', icon: Wallet },
-        { path: '/threat-intel', label: 'Threat Intel', icon: Search },
+        { path: '/encrypted-gallery', label: 'Encrypted Gallery', icon: Search },
     ];
 
     const externalLinks = [
@@ -55,7 +55,7 @@ const Navbar = () => {
     ];
 
     return (
-        <nav className="bg-dark-panel border-b border-cyber-blue/30 backdrop-blur-sm sticky top-0 z-50">
+        <nav className="bg-dark-panel border-b border-cyber-blue/30 backdrop-blur-sm sticky top-0 z-[100]">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-center h-16 relative">
                     {/* Logo */}

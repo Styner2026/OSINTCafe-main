@@ -5,12 +5,15 @@ import { useEffect } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Footer from './components/Footer.tsx';
 import HackathonBanner from './components/HackathonBanner.tsx';
-import Home from './pages/Home.tsx';
-import DatingSafety from './pages/DatingSafety.tsx';
-import CafeConnectWallet from './pages/CafeConnectWallet.tsx';
-import ThreatIntelligence from './pages/ThreatIntelligence.tsx';
-import Dashboard from './pages/Dashboard.tsx';
-import APIStatus from './pages/APIStatus.tsx';
+import Home from './pages/Home';
+import AIAssistant from './pages/AIAssistant';
+import DatingSafety from './pages/DatingSafety';
+import CafeConnectWallet from './pages/CafeConnectWallet';
+// import WalletDashboard from './pages/WalletDashboard';
+import EncryptedGallery from './pages/EncryptedGallery';
+import Education from './pages/Education';
+import Dashboard from './pages/Dashboard';
+import APIStatus from './pages/APIStatus';
 import { PerformanceProvider } from './context/PerformanceContext.tsx';
 
 
@@ -37,9 +40,12 @@ function App() {
             <main>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/dating-safety" element={<DatingSafety />} />
                 <Route path="/cafe-connect-wallet" element={<CafeConnectWallet />} />
-                <Route path="/threat-intel" element={<ThreatIntelligence />} />
+                {/* <Route path="/wallet" element={<WalletDashboard />} /> */}
+                <Route path="/encrypted-gallery" element={<EncryptedGallery />} />
+                <Route path="/education" element={<Education />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/api-status" element={<APIStatus />} />
               </Routes>

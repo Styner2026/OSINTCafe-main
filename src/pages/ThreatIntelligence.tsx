@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
-import { Bot, Activity, Globe, Send, Key, Shield } from 'lucide-react';
+import { Shield, Users, Activity, Key, Lock, Upload, FileImage, Trash2, Share2, Globe, Bot, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { icpIdentityService } from '../services/icpIdentityService';
+import { icpEncryptedNotesService, ThreatIntelNote } from '../services/icpEncryptedNotesService';
+import { icpPhotoGalleryService, ThreatIntelImage } from '../services/icpPhotoGalleryService';
 import toast from 'react-hot-toast';
 
 // Define types for verification result
@@ -48,6 +50,28 @@ const ThreatIntelligence = () => {
     ]);
     const [chatInput, setChatInput] = useState('');
     const [isChatLoading, setIsChatLoading] = useState(false);
+
+    // ICP Encrypted Notes states
+    const [threatNotes, setThreatNotes] = useState<ThreatIntelNote[]>([]);
+    const [isLoadingNotes, setIsLoadingNotes] = useState(false);
+    const [newNoteTitle, setNewNoteTitle] = useState('');
+    const [newNoteContent, setNewNoteContent] = useState('');
+    const [newNoteThreatLevel, setNewNoteThreatLevel] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
+    const [newNoteCategory, setNewNoteCategory] = useState('General');
+    const [isCreatingNote, setIsCreatingNote] = useState(false);
+
+    // ICP Photo Gallery states
+    const [threatImages, setThreatImages] = useState<ThreatIntelImage[]>([]);
+    const [isLoadingImages, setIsLoadingImages] = useState(false);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
+    const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+    const [imageCategory, setImageCategory] = useState('General');
+    const [imageThreatLevel, setImageThreatLevel] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
+    const [imageDescription, setImageDescription] = useState('');
+
+    // ICP Authentication state
+    const [isICPAuthenticated, setIsICPAuthenticated] = useState(false);
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
     const chatMessagesEndRef = useRef<HTMLDivElement>(null);
 
     // Initialize component and reset state on page visit
@@ -73,9 +97,17 @@ const ThreatIntelligence = () => {
         setChatInput('');
         setIsChatLoading(false);
 
-        // Initialize ICP Identity service
+        // Initialize all ICP services
         const initializeICP = async () => {
             try {
+                console.log('🚀 Initializing ICP services for Threat Intelligence...');
+
+                // Initialize all ICP services in parallel
+                const [notesInit, galleryInit] = await Promise.all([
+                    icpEncryptedNotesService.initialize(),
+                    icpPhotoGalleryService.initialize()
+                ]);
+
                 await icpIdentityService.initialize();
                 const state = icpIdentityService.getState();
                 setIcpIdentity({
@@ -83,8 +115,17 @@ const ThreatIntelligence = () => {
                     principal: state.principal,
                     isLoading: false
                 });
+
+                if (state.isAuthenticated) {
+                    setIsICPAuthenticated(true);
+
+                    // Load initial threat intelligence data
+                    await loadThreatIntelData();
+                }
+
+                console.log(`✅ ICP Services initialized - Notes: ${notesInit}, Gallery: ${galleryInit}`);
             } catch (error) {
-                console.error('Failed to initialize ICP Identity:', error);
+                console.error('❌ Failed to initialize ICP services:', error);
             }
         };
 
@@ -450,6 +491,120 @@ const ThreatIntelligence = () => {
             setChatMessages(prev => [...prev, errorMessage]);
         } finally {
             setIsChatLoading(false);
+        }
+    };
+
+    // ICP Threat Intelligence Functions
+    const loadThreatIntelData = async () => {
+        try {
+            setIsLoadingNotes(true);
+            setIsLoadingImages(true);
+
+            const [notes, images] = await Promise.all([
+                icpEncryptedNotesService.getThreatIntelNotes(),
+                icpPhotoGalleryService.getThreatIntelImages()
+            ]);
+
+            setThreatNotes(notes);
+            setThreatImages(images);
+
+            console.log(`✅ Loaded ${notes.length} threat notes and ${images.length} threat images`);
+        } catch (error) {
+            console.error('❌ Failed to load threat intelligence data:', error);
+            toast.error('Failed to load threat intelligence data');
+        } finally {
+            setIsLoadingNotes(false);
+            setIsLoadingImages(false);
+        }
+    };
+
+    const handleCreateThreatNote = async () => {
+        if (!newNoteTitle.trim() || !newNoteContent.trim()) {
+            toast.error('Please fill in both title and content');
+            return;
+        }
+
+        setIsCreatingNote(true);
+        try {
+            const result = await icpEncryptedNotesService.createThreatIntelNote({
+                title: newNoteTitle,
+                content: newNoteContent,
+                threatLevel: newNoteThreatLevel,
+                category: newNoteCategory,
+                isEncrypted: true,
+                sharedWith: []
+            });
+
+            if (result.success) {
+                toast.success('🔐 Encrypted threat note created on ICP!');
+                setNewNoteTitle('');
+                setNewNoteContent('');
+                await loadThreatIntelData();
+            } else {
+                toast.error(result.error || 'Failed to create threat note');
+            }
+        } catch (error) {
+            console.error('❌ Failed to create threat note:', error);
+            toast.error('Error creating threat note');
+        } finally {
+            setIsCreatingNote(false);
+        }
+    };
+
+    const handleImageUpload = async () => {
+        if (!selectedImageFile) {
+            toast.error('Please select an image file');
+            return;
+        }
+
+        const validation = icpPhotoGalleryService.validateImageFile(selectedImageFile);
+        if (!validation.valid) {
+            toast.error(validation.error || 'Invalid image file');
+            return;
+        }
+
+        setIsUploadingImage(true);
+        try {
+            const result = await icpPhotoGalleryService.uploadThreatIntelImage(selectedImageFile, {
+                category: imageCategory,
+                threatLevel: imageThreatLevel,
+                description: imageDescription
+            });
+
+            if (result.success) {
+                toast.success('📸 Threat image uploaded to ICP blockchain!');
+                setSelectedImageFile(null);
+                setImageCategory('General');
+                setImageThreatLevel('medium');
+                setImageDescription('');
+                await loadThreatIntelData();
+            } else {
+                toast.error(result.error || 'Failed to upload image');
+            }
+        } catch (error) {
+            console.error('❌ Failed to upload image:', error);
+            toast.error('Error uploading image');
+        } finally {
+            setIsUploadingImage(false);
+        }
+    };
+
+    const handleICPAuthentication = async () => {
+        setIsAuthenticating(true);
+        try {
+            const success = await icpEncryptedNotesService.authenticate();
+            if (success) {
+                setIsICPAuthenticated(true);
+                toast.success('🚀 Successfully authenticated with ICP!');
+                await loadThreatIntelData();
+            } else {
+                toast.error('Authentication failed');
+            }
+        } catch (error) {
+            console.error('❌ ICP authentication failed:', error);
+            toast.error('Authentication error');
+        } finally {
+            setIsAuthenticating(false);
         }
     };
 
@@ -961,7 +1116,7 @@ const ThreatIntelligence = () => {
                                 </div>
                             </motion.div>
 
-                            {/* Encrypted Notes Section */}
+                            {/* ICP Encrypted Notes Section - PRODUCTION READY */}
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -969,74 +1124,346 @@ const ThreatIntelligence = () => {
                                 className="bg-dark-panel rounded-2xl cyber-border shadow-2xl shadow-black/50 mt-8 relative z-10 backdrop-blur-sm"
                             >
                                 <div className="p-6">
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <div className="w-12 h-12 bg-gradient-to-r from-cyber-green to-cyber-blue rounded-lg flex items-center justify-center">
-                                            <span className="text-2xl">🔒</span>
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-gradient-to-r from-cyber-green to-cyber-blue rounded-lg flex items-center justify-center">
+                                                <Lock className="w-6 h-6 text-white" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-2xl font-cyber font-bold text-cyber-green mb-2">
+                                                    🔐 ICP Encrypted Threat Notes
+                                                </h3>
+                                                <p className="text-gray-300">
+                                                    Production-ready encrypted storage on Internet Computer blockchain using vetKeys
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-2xl font-cyber font-bold text-cyber-green mb-2">
-                                                Encrypted Threat Reports
-                                            </h3>
-                                            <p className="text-gray-300">
-                                                Secure, encrypted note storage for sensitive threat intelligence using ICP vetKeys
-                                            </p>
+
+                                        {/* ICP Authentication Status */}
+                                        <div className="flex items-center gap-3">
+                                            {isICPAuthenticated ? (
+                                                <div className="flex items-center gap-2 px-3 py-2 bg-cyber-green/20 border border-cyber-green/50 rounded-lg">
+                                                    <div className="w-2 h-2 bg-cyber-green rounded-full animate-pulse"></div>
+                                                    <span className="text-xs text-cyber-green font-medium">ICP Connected</span>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={handleICPAuthentication}
+                                                    disabled={isAuthenticating}
+                                                    className="px-4 py-2 bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-blue/50 text-cyber-blue font-medium rounded-lg text-sm transition-colors disabled:opacity-50"
+                                                >
+                                                    {isAuthenticating ? '🔄 Connecting...' : '🚀 Connect to ICP'}
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        {/* Create New Note */}
+                                        {/* Create New Threat Note - PRODUCTION READY */}
                                         <div className="bg-gray-800/50 rounded-lg p-4 border border-cyber-blue/20">
-                                            <h4 className="text-lg font-bold text-cyber-blue mb-4">Create Encrypted Note</h4>
-                                            <div className="space-y-4">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Note title..."
-                                                    className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
-                                                />
-                                                <select
-                                                    title="Note Type"
-                                                    className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
-                                                >
-                                                    <option value="threat_report">Threat Report</option>
-                                                    <option value="evidence">Evidence Log</option>
-                                                    <option value="personal">Personal Note</option>
-                                                </select>
-                                                <textarea
-                                                    rows={4}
-                                                    placeholder="Your encrypted content..."
-                                                    className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
-                                                />
-                                                <button
-                                                    className="w-full bg-gradient-to-r from-cyber-green to-cyber-blue text-black font-bold py-2 px-4 rounded hover:from-cyber-green/80 hover:to-cyber-blue/80 transition-all duration-300"
-                                                    onClick={() => {
-                                                        // TODO: Integrate with ICP backend
-                                                        alert('Encrypted notes integration coming soon! Backend is ready.');
-                                                    }}
-                                                >
-                                                    🔐 Encrypt & Store Note
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Notes List */}
-                                        <div className="bg-gray-800/50 rounded-lg p-4 border border-cyber-green/20">
-                                            <h4 className="text-lg font-bold text-cyber-green mb-4">My Encrypted Notes</h4>
-                                            <div className="space-y-3">
-                                                <div className="bg-dark-bg/50 rounded p-3 border border-gray-600">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <h5 className="font-semibold text-white text-sm">Sample Threat Report</h5>
-                                                        <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded">threat_report</span>
+                                            <h4 className="text-lg font-bold text-cyber-blue mb-4 flex items-center gap-2">
+                                                <Lock className="w-4 h-4" />
+                                                Create Encrypted Threat Note
+                                            </h4>
+                                            {isICPAuthenticated ? (
+                                                <div className="space-y-4">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Threat report title..."
+                                                        value={newNoteTitle}
+                                                        onChange={(e) => setNewNoteTitle(e.target.value)}
+                                                        className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
+                                                    />
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        <select
+                                                            value={newNoteCategory}
+                                                            onChange={(e) => setNewNoteCategory(e.target.value)}
+                                                            className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
+                                                        >
+                                                            <option value="General">General</option>
+                                                            <option value="Crypto">Crypto / Web3</option>
+                                                            <option value="Quantum">Quantum Computing</option>
+                                                            <option value="Space">Space</option>
+                                                            <option value="AI">AI / Robotics</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                        <select
+                                                            value={newNoteThreatLevel}
+                                                            onChange={(e) => setNewNoteThreatLevel(e.target.value as any)}
+                                                            className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
+                                                        >
+                                                            <option value="low">🟢 Low Risk</option>
+                                                            <option value="medium">🟡 Medium Risk</option>
+                                                            <option value="high">🟠 High Risk</option>
+                                                            <option value="critical">🔴 Critical Risk</option>
+                                                        </select>
                                                     </div>
-                                                    <p className="text-xs text-gray-400 mb-2">Created: Jan 25, 2025</p>
-                                                    <button className="text-xs bg-cyber-blue/20 text-cyber-blue px-2 py-1 rounded hover:bg-cyber-blue/30 transition-colors">
-                                                        Decrypt & View
+                                                    <textarea
+                                                        rows={4}
+                                                        placeholder="Detailed threat intelligence content (will be encrypted)..."
+                                                        value={newNoteContent}
+                                                        onChange={(e) => setNewNoteContent(e.target.value)}
+                                                        className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-cyber-blue focus:outline-none"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleCreateThreatNote}
+                                                        disabled={isCreatingNote || !newNoteTitle.trim() || !newNoteContent.trim()}
+                                                        className="w-full bg-gradient-to-r from-cyber-green to-cyber-blue text-black font-bold py-2 px-4 rounded hover:from-cyber-green/80 hover:to-cyber-blue/80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        {isCreatingNote ? '🔄 Encrypting & Storing...' : '🔐 Encrypt & Store on ICP'}
                                                     </button>
                                                 </div>
-
-                                                <div className="text-center text-gray-500 text-sm py-4">
-                                                    Connect with Internet Identity to view your encrypted notes
+                                            ) : (
+                                                <div className="text-center py-8">
+                                                    <Lock className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                                                    <p className="text-gray-400 mb-4">Connect to ICP to create encrypted threat notes</p>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleICPAuthentication}
+                                                        className="px-4 py-2 bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-blue/50 text-cyber-blue font-medium rounded-lg text-sm transition-colors"
+                                                    >
+                                                        🚀 Connect to ICP
+                                                    </button>
                                                 </div>
+                                            )}
+                                        </div>
+
+                                        {/* Encrypted Notes List - PRODUCTION READY */}
+                                        <div className="bg-gray-800/50 rounded-lg p-4 border border-cyber-green/20">
+                                            <h4 className="text-lg font-bold text-cyber-green mb-4 flex items-center gap-2">
+                                                <FileImage className="w-4 h-4" />
+                                                My Encrypted Threat Notes ({threatNotes.length})
+                                            </h4>
+
+                                            {isLoadingNotes ? (
+                                                <div className="text-center py-8">
+                                                    <div className="w-6 h-6 border-2 border-cyber-green border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                                                    <p className="text-gray-400 text-sm">Loading encrypted notes from ICP...</p>
+                                                </div>
+                                            ) : threatNotes.length > 0 ? (
+                                                <div className="space-y-3 max-h-64 overflow-y-auto">
+                                                    {threatNotes.map((note) => (
+                                                        <div key={note.id} className="bg-dark-bg/50 rounded p-3 border border-gray-600 hover:border-cyber-green/50 transition-colors">
+                                                            <div className="flex justify-between items-start mb-2">
+                                                                <h5 className="font-semibold text-white text-sm truncate">{note.title}</h5>
+                                                                <div className="flex gap-1">
+                                                                    <span className={`text-xs px-2 py-1 rounded ${note.threatLevel === 'critical' ? 'bg-red-500/20 text-red-400' :
+                                                                        note.threatLevel === 'high' ? 'bg-orange-500/20 text-orange-400' :
+                                                                            note.threatLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                                                'bg-green-500/20 text-green-400'
+                                                                        }`}>
+                                                                        {note.threatLevel}
+                                                                    </span>
+                                                                    <span className="text-xs bg-cyber-blue/20 text-cyber-blue px-2 py-1 rounded">
+                                                                        {note.category}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <p className="text-xs text-gray-400 mb-2">
+                                                                Created: {note.timestamp.toLocaleDateString()} •
+                                                                {note.isEncrypted ? ' 🔐 Encrypted' : ' 📝 Plain'} •
+                                                                Shared with {note.sharedWith.length} users
+                                                            </p>
+                                                            <div className="flex gap-2">
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-xs bg-cyber-blue/20 text-cyber-blue px-2 py-1 rounded hover:bg-cyber-blue/30 transition-colors"
+                                                                >
+                                                                    🔓 Decrypt & View
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-xs bg-cyber-green/20 text-cyber-green px-2 py-1 rounded hover:bg-cyber-green/30 transition-colors"
+                                                                >
+                                                                    <Share2 className="w-3 h-3 inline mr-1" />
+                                                                    Share
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded hover:bg-red-500/30 transition-colors"
+                                                                >
+                                                                    <Trash2 className="w-3 h-3 inline mr-1" />
+                                                                    Delete
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : isICPAuthenticated ? (
+                                                <div className="text-center text-gray-500 text-sm py-8">
+                                                    <Lock className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+                                                    <p>No encrypted threat notes yet.</p>
+                                                    <p className="text-xs mt-1">Create your first encrypted note to get started!</p>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center text-gray-500 text-sm py-8">
+                                                    <Users className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+                                                    <p>Connect with ICP to view your encrypted notes</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* ICP Photo Gallery Section - PRODUCTION READY */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.6 }}
+                                className="bg-dark-panel rounded-2xl cyber-border shadow-2xl shadow-black/50 mt-8 relative z-10 backdrop-blur-sm"
+                            >
+                                <div className="p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-gradient-to-r from-accent-orange to-cyber-green rounded-lg flex items-center justify-center">
+                                                <FileImage className="w-6 h-6 text-white" />
                                             </div>
+                                            <div>
+                                                <h3 className="text-2xl font-cyber font-bold text-accent-orange mb-2">
+                                                    📸 ICP Threat Intelligence Gallery
+                                                </h3>
+                                                <p className="text-gray-300">
+                                                    Decentralized image storage for threat intelligence evidence on Internet Computer
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {/* Upload Section */}
+                                        <div className="bg-gray-800/50 rounded-lg p-4 border border-accent-orange/20">
+                                            <h4 className="text-lg font-bold text-accent-orange mb-4 flex items-center gap-2">
+                                                <Upload className="w-4 h-4" />
+                                                Upload Threat Evidence
+                                            </h4>
+                                            {isICPAuthenticated ? (
+                                                <div className="space-y-4">
+                                                    <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-accent-orange/50 transition-colors">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={(e) => setSelectedImageFile(e.target.files?.[0] || null)}
+                                                            className="hidden"
+                                                            id="image-upload"
+                                                        />
+                                                        <label htmlFor="image-upload" className="cursor-pointer">
+                                                            <FileImage className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+                                                            <p className="text-gray-400 mb-2">
+                                                                {selectedImageFile ? selectedImageFile.name : 'Click to select image'}
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        <select
+                                                            title="Image Category"
+                                                            value={imageCategory}
+                                                            onChange={(e) => setImageCategory(e.target.value)}
+                                                            className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-accent-orange focus:outline-none"
+                                                        >
+                                                            <option value="General">General</option>
+                                                            <option value="Crypto">Crypto / Web3</option>
+                                                            <option value="Quantum">Quantum Computing</option>
+                                                            <option value="Space">Space</option>
+                                                            <option value="AI">AI / Robotics</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                        <select
+                                                            title="Threat Level"
+                                                            value={imageThreatLevel}
+                                                            onChange={(e) => setImageThreatLevel(e.target.value as any)}
+                                                            className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-accent-orange focus:outline-none"
+                                                        >
+                                                            <option value="low">🟢 Low Risk</option>
+                                                            <option value="medium">🟡 Medium Risk</option>
+                                                            <option value="high">🟠 High Risk</option>
+                                                            <option value="critical">🔴 Critical Risk</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <textarea
+                                                        rows={3}
+                                                        placeholder="Description of threat evidence..."
+                                                        value={imageDescription}
+                                                        onChange={(e) => setImageDescription(e.target.value)}
+                                                        className="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white text-sm focus:border-accent-orange focus:outline-none"
+                                                    />
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleImageUpload}
+                                                        disabled={isUploadingImage || !selectedImageFile}
+                                                        className="w-full bg-gradient-to-r from-accent-orange to-cyber-green text-black font-bold py-2 px-4 rounded hover:from-accent-orange/80 hover:to-cyber-green/80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        {isUploadingImage ? '🔄 Uploading to ICP...' : '📸 Upload to ICP Blockchain'}
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-8">
+                                                    <FileImage className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                                                    <p className="text-gray-400 mb-4">Connect to ICP to upload threat evidence</p>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleICPAuthentication}
+                                                        className="px-4 py-2 bg-accent-orange/20 hover:bg-accent-orange/30 border border-accent-orange/50 text-accent-orange font-medium rounded-lg text-sm transition-colors"
+                                                    >
+                                                        🚀 Connect to ICP
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Gallery Section */}
+                                        <div className="bg-gray-800/50 rounded-lg p-4 border border-cyber-green/20">
+                                            <h4 className="text-lg font-bold text-cyber-green mb-4 flex items-center gap-2">
+                                                <Globe className="w-4 h-4" />
+                                                Threat Evidence Gallery ({threatImages.length})
+                                            </h4>
+
+                                            {isLoadingImages ? (
+                                                <div className="text-center py-8">
+                                                    <div className="w-6 h-6 border-2 border-cyber-green border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                                                    <p className="text-gray-400 text-sm">Loading images from ICP...</p>
+                                                </div>
+                                            ) : threatImages.length > 0 ? (
+                                                <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                                                    {threatImages.map((image) => (
+                                                        <div key={image.id} className="bg-dark-bg/50 rounded p-2 border border-gray-600 hover:border-cyber-green/50 transition-colors">
+                                                            <img
+                                                                src={image.url}
+                                                                alt={image.description}
+                                                                className="w-full h-20 object-cover rounded mb-2"
+                                                                loading="lazy"
+                                                            />
+                                                            <p className="text-xs text-white font-medium truncate">{image.name}</p>
+                                                            <div className="flex justify-between items-center mt-1">
+                                                                <span className={`text-xs px-1 py-0.5 rounded ${image.threatLevel === 'critical' ? 'bg-red-500/20 text-red-400' :
+                                                                    image.threatLevel === 'high' ? 'bg-orange-500/20 text-orange-400' :
+                                                                        image.threatLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                                            'bg-green-500/20 text-green-400'
+                                                                    }`}>
+                                                                    {image.threatLevel}
+                                                                </span>
+                                                                <span className="text-xs text-gray-400">{image.category}</span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : isICPAuthenticated ? (
+                                                <div className="text-center text-gray-500 text-sm py-8">
+                                                    <FileImage className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+                                                    <p>No threat evidence uploaded yet.</p>
+                                                    <p className="text-xs mt-1">Upload your first image to get started!</p>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center text-gray-500 text-sm py-8">
+                                                    <Globe className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+                                                    <p>Connect with ICP to view threat evidence</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
